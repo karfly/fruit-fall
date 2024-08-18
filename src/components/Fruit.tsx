@@ -20,6 +20,7 @@ export const Fruit: React.FC<FruitProps> = ({ fruit }) => {
         top: fruit.y - fruit.type.radius,
         width: size,
         height: size,
+        transform: `rotate(${fruit.rotation}rad)`,
       }}
     >
       <div

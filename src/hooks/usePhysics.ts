@@ -22,38 +22,50 @@ export const usePhysics = () => {
     Matter.World.add(world, [ground, leftWall, rightWall]);
 
     Matter.Events.on(engine, 'collisionStart', (event) => {
-      console.log('Collision event triggered');
       event.pairs.forEach((pair) => {
         const { bodyA, bodyB } = pair;
-        console.log(`Collision between bodies: ${bodyA.label} and ${bodyB.label}`);
 
         const fruits = useGameStore.getState().fruits;
         const fruitA = fruits.find((f) => f.id === bodyA.label);
         const fruitB = fruits.find((f) => f.id === bodyB.label);
 
-        console.log('fruitA:', fruitA);
-        console.log('fruitB:', fruitB);
-
         if (fruitA && fruitB) {
-          console.log(`Fruit types: ${fruitA.type.id} and ${fruitB.type.id}`);
           if (fruitA.type.id === fruitB.type.id) {
-            console.log('Matching fruits found!');
             const nextType = getNextFruitType(fruitA.type);
             if (nextType) {
-              console.log(`Creating new fruit of type: ${nextType.id}`);
               Matter.World.remove(world, bodyA);
               Matter.World.remove(world, bodyB);
               removeFruit(fruitA.id);
               removeFruit(fruitB.id);
+
+              const newX = (bodyA.position.x + bodyB.position.x) / 2;
+              const newY = (bodyA.position.y + bodyB.position.y) / 2;
+              const newRotation = bodyA.angle;
+              const newInitialAngularVelocity = (bodyA.angularVelocity + bodyB.angularVelocity) / 2;
+
               const newFruit: FruitInstance = {
                 id: `${Date.now()}`,
                 type: nextType,
-                x: (bodyA.position.x + bodyB.position.x) / 2,
-                y: (bodyA.position.y + bodyB.position.y) / 2,
+                x: newX,
+                y: newY,
+                rotation: newRotation,
+                initialAngularVelocity: newInitialAngularVelocity,
               };
               addFruit(newFruit);
               incrementScore(nextType.id * 10);
             }
+          }
+        }
+      });
+    });
+
+    Matter.Events.on(engine, 'afterUpdate', () => {
+      const bodies = Matter.Composite.allBodies(world);
+      bodies.forEach((body) => {
+        if (body.label && body.label !== 'Rectangle Body') {
+          if (body.angle === 0 && body.angularVelocity === 0) {
+            Matter.Body.setAngle(body, Math.random() * Math.PI * 2);
+            Matter.Body.setAngularVelocity(body, (Math.random() - 0.5) * 0.1);
           }
         }
       });
@@ -82,7 +94,12 @@ export const usePhysics = () => {
             mass: fruit.type.mass,
             restitution: 0.3,
             friction: 0.1,
+            frictionAir: 0.001,
           });
+
+          Matter.Body.setAngle(body, fruit.rotation);
+          Matter.Body.setAngularVelocity(body, fruit.initialAngularVelocity);
+
           Matter.World.add(worldRef.current!, body);
         }
       });
@@ -100,6 +117,7 @@ export const usePhysics = () => {
             useGameStore.getState().updateFruit(body.label, {
               x: body.position.x,
               y: body.position.y,
+              rotation: body.angle,
             });
           }
         });
@@ -116,14 +134,26 @@ export const usePhysics = () => {
 
   const dropFruit = (x: number) => {
     const { nextFruit } = useGameStore.getState();
+    const initialRotation = 0;
+    const initialAngularVelocity = (Math.random() - 0.5) * 0.1;
     const newFruit: FruitInstance = {
       id: `${Date.now()}`,
       type: nextFruit,
       x,
       y: nextFruit.radius,
+      rotation: initialRotation,
+      initialAngularVelocity,
     };
     addFruit(newFruit);
     setNextFruit(fruitTypes[0]);
+
+    if (worldRef.current) {
+      const body = Matter.Composite.allBodies(worldRef.current).find(b => b.label === newFruit.id);
+      if (body) {
+        Matter.Body.setAngle(body, initialRotation);
+        Matter.Body.setAngularVelocity(body, initialAngularVelocity);
+      }
+    }
   };
 
   return { dropFruit };

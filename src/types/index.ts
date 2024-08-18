@@ -15,4 +15,6 @@ export interface FruitType {
     type: FruitType;
     x: number;
     y: number;
+    rotation: number;
+    initialAngularVelocity: number;
   }
