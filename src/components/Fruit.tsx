@@ -23,7 +23,7 @@ export const Fruit: React.FC<FruitProps> = ({ fruit }) => {
         transform: `rotate(${fruit.rotation}rad)`,
       }}
     >
-      <div
+      {/* <div
         style={{
           position: 'absolute',
           width: '100%',
@@ -33,7 +33,7 @@ export const Fruit: React.FC<FruitProps> = ({ fruit }) => {
           boxSizing: 'border-box',
           zIndex: 2,
         }}
-      />
+      /> */}
       <div
         style={{
           position: 'absolute',

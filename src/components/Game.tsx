@@ -3,10 +3,11 @@ import { useGameStore } from '../store/gameStore';
 import { Fruit } from './Fruit';
 import { usePhysics } from '../hooks/usePhysics';
 import { fruitTypes } from '../utils/fruitUtils';
+import { FogAnimation } from './FogAnimation';
 
 export const Game: React.FC = () => {
   const { fruits, score, isGameOver, resetGame, nextFruit } = useGameStore();
-  const { dropFruit } = usePhysics();
+  const { dropFruit, fogAnimation } = usePhysics();
   const [dragPosition, setDragPosition] = useState<number | null>(null);
   const gameAreaRef = useRef<HTMLDivElement>(null);
 
@@ -67,6 +68,13 @@ export const Game: React.FC = () => {
             backgroundSize: 'cover',
             opacity: 0.5,
           }}
+        />
+      )}
+      {fogAnimation && (
+        <FogAnimation
+          x={fogAnimation.x}
+          y={fogAnimation.y}
+          size={fogAnimation.size}
         />
       )}
       {isGameOver && (

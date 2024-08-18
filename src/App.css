@@ -40,3 +40,19 @@
 .read-the-docs {
   color: #888;
 }
+
+.fog {
+
+  height: 333px;
+  width: 333px;
+  background: url("src/assets/fog_sprite_4.webp");
+  animation-name: fogAnimation;
+  animation-duration: 0.3s;
+  animation-timing-function: steps(4);
+  animation-iteration-count: 1;
+}
+
+@keyframes fogAnimation {
+  from { background-position: 0px; }
+  to { background-position: -1332px; }
+}
