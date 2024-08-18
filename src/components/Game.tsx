@@ -2,7 +2,6 @@ import React, { useState, useRef, useEffect } from 'react';
 import { useGameStore } from '../store/gameStore';
 import { Fruit } from './Fruit';
 import { usePhysics } from '../hooks/usePhysics';
-import { fruitTypes } from '../utils/fruitUtils';
 import { FogAnimation } from './FogAnimation';
 
 export const Game: React.FC = () => {

@@ -3,7 +3,6 @@ import Matter from 'matter-js';
 import { useGameStore } from '../store/gameStore';
 import { FruitInstance } from '../types';
 import { getNextFruitType, fruitTypes } from '../utils/fruitUtils';
-import { FogAnimation } from '../components/FogAnimation';
 
 interface FogAnimationState {
   x: number;
@@ -14,7 +13,7 @@ interface FogAnimationState {
 export const usePhysics = () => {
   const engineRef = useRef<Matter.Engine | null>(null);
   const worldRef = useRef<Matter.World | null>(null);
-  const { fruits, addFruit, removeFruit, incrementScore, setGameOver, setNextFruit } = useGameStore();
+  const { fruits, addFruit, removeFruit, incrementScore, setNextFruit } = useGameStore();
   const [fogAnimation, setFogAnimation] = useState<FogAnimationState | null>(null);
 
   useEffect(() => {
@@ -30,8 +29,8 @@ export const usePhysics = () => {
 
     Matter.World.add(world, [ground, leftWall, rightWall]);
 
-    Matter.Events.on(engine, 'collisionStart', (event) => {
-      event.pairs.forEach((pair) => {
+    Matter.Events.on(engine, 'collisionStart', (event: Matter.IEventCollision<Matter.Engine>) => {
+      event.pairs.forEach((pair: Matter.Pair) => {
         const { bodyA, bodyB } = pair;
 
         const fruits = useGameStore.getState().fruits;
@@ -72,7 +71,7 @@ export const usePhysics = () => {
 
     Matter.Events.on(engine, 'afterUpdate', () => {
       const bodies = Matter.Composite.allBodies(world);
-      bodies.forEach((body) => {
+      bodies.forEach((body: Matter.Body) => {
         if (body.label && body.label !== 'Rectangle Body') {
           if (body.angle === 0 && body.angularVelocity === 0) {
             Matter.Body.setAngle(body, Math.random() * Math.PI * 2);
@@ -95,7 +94,7 @@ export const usePhysics = () => {
   useEffect(() => {
     if (engineRef.current && worldRef.current) {
       fruits.forEach((fruit) => {
-        const existingBody = Matter.Composite.allBodies(worldRef.current!).find(function(body) {
+        const existingBody = Matter.Composite.allBodies(worldRef.current!).find(function(body: Matter.Body) {
             return body.label === fruit.id;
         });
 
@@ -123,7 +122,7 @@ export const usePhysics = () => {
 
       const updateFruits = () => {
         const bodies = Matter.Composite.allBodies(worldRef.current!);
-        bodies.forEach((body) => {
+        bodies.forEach((body: Matter.Body) => {
           if (body.label && body.label !== 'Rectangle Body') {
             useGameStore.getState().updateFruit(body.label, {
               x: body.position.x,
@@ -159,7 +158,7 @@ export const usePhysics = () => {
     setNextFruit(fruitTypes[0]);
 
     if (worldRef.current) {
-      const body = Matter.Composite.allBodies(worldRef.current).find(b => b.label === newFruit.id);
+      const body = Matter.Composite.allBodies(worldRef.current).find((b: Matter.Body) => b.label === newFruit.id);
       if (body) {
         Matter.Body.setAngle(body, initialRotation);
         Matter.Body.setAngularVelocity(body, initialAngularVelocity);
