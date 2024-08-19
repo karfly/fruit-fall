@@ -22,10 +22,84 @@ export const usePhysics = () => {
     engineRef.current = engine;
     worldRef.current = world;
 
-    // const ground = Matter.Bodies.rectangle(200, 400, 400, 20, { isStatic: true });
-    const ground = Matter.Bodies.rectangle(200, 400, 400, 20, { isStatic: true });
-    const leftWall = Matter.Bodies.rectangle(0, 300, 20, 600, { isStatic: true });
-    const rightWall = Matter.Bodies.rectangle(400, 300, 20, 600, { isStatic: true });
+    // Assuming your game area (container) size
+    const gameArea = document.querySelector('#game-area');
+    const containerWidth = gameArea?.clientWidth || 0;
+    const containerHeight = gameArea?.clientHeight || 0;
+    console.log("containerHeight", containerHeight);
+
+    // Original background image dimensions
+    const originalImageWidth = 1900;
+    const originalImageHeight = 2532;
+    console.log("originalImageHeight", originalImageHeight);
+
+    const scaleY = containerHeight / originalImageHeight;
+    const scaleX = containerWidth / originalImageWidth;
+    const offsetX = (originalImageWidth - containerWidth/scaleY) / 2;
+
+    // ground
+    const groundHeight = 20;
+    const groundWidth = 1170 * scaleY;
+    const groundX = containerWidth / 2
+    const groundY = 2092 * scaleY - 45;
+
+    const ground = Matter.Bodies.rectangle(
+      groundX,
+      groundY,
+      groundWidth,
+      groundHeight,
+      {
+        isStatic: true,
+        label: "_ground"
+      }
+    );
+
+    // left wall
+    const leftWallWidth = 20;
+    const leftWallHeight = 1270 * scaleY;
+    const leftWallX = (365 - offsetX) * scaleX - leftWallWidth/2;
+    const leftWallY = 1457 * scaleY;
+    const leftWall = Matter.Bodies.rectangle(
+      leftWallX,
+      leftWallY,
+      leftWallWidth,
+      leftWallHeight,
+      {
+        isStatic: true,
+        label: "_leftWall"
+      }
+    );
+
+    // right wall
+    const rightWallWidth = 20;
+    const rightWallHeight = 1270 * scaleY;
+    const rightWallX = (1535 - offsetX) * scaleY + rightWallWidth/2;
+    const rightWallY = 1457 * scaleY;
+    console.log("offsetX", offsetX);
+    console.log("scaleX", scaleX);
+    console.log("rightWallX", rightWallX);
+    console.log("rightWallY", rightWallY);
+    console.log("rightWallWidth", rightWallWidth);
+    console.log("rightWallHeight", rightWallHeight);
+    const rightWall = Matter.Bodies.rectangle(
+      rightWallX,
+      rightWallY,
+      rightWallWidth,
+      rightWallHeight,
+      { isStatic: true,
+        label: "_rightWall"
+      }
+    );
+
+    // const groundLine = document.createElement('div');
+    // groundLine.style.position = 'absolute';
+    // groundLine.style.left = `${rightWallX}px`;
+    // groundLine.style.top = `${rightWallY}px`;
+    // groundLine.style.width = `${rightWallWidth}px`;
+    // groundLine.style.height = `${rightWallHeight}px`;
+    // groundLine.style.backgroundColor = 'red';
+    // groundLine.style.zIndex = '1000'; // Ensure it's on top
+    // gameArea!.appendChild(groundLine);
 
     Matter.World.add(world, [ground, leftWall, rightWall]);
 
@@ -72,7 +146,7 @@ export const usePhysics = () => {
     Matter.Events.on(engine, 'afterUpdate', () => {
       const bodies = Matter.Composite.allBodies(world);
       bodies.forEach((body: Matter.Body) => {
-        if (body.label && body.label !== 'Rectangle Body') {
+        if (body.label && !body.label.startsWith('_')) {
           if (body.angle === 0 && body.angularVelocity === 0) {
             Matter.Body.setAngle(body, Math.random() * Math.PI * 2);
             Matter.Body.setAngularVelocity(body, (Math.random() - 0.5) * 0.1);
@@ -123,7 +197,7 @@ export const usePhysics = () => {
       const updateFruits = () => {
         const bodies = Matter.Composite.allBodies(worldRef.current!);
         bodies.forEach((body: Matter.Body) => {
-          if (body.label && body.label !== 'Rectangle Body') {
+          if (body.label && !body.label.startsWith('_')) {
             useGameStore.getState().updateFruit(body.label, {
               x: body.position.x,
               y: body.position.y,
@@ -146,11 +220,20 @@ export const usePhysics = () => {
     const { nextFruit } = useGameStore.getState();
     const initialRotation = 0;
     const initialAngularVelocity = (Math.random() - 0.5) * 0.1;
+
+
+    // Get the left wallet body
+    const leftWall = Matter.Composite.allBodies(worldRef.current!).find(
+      (body: Matter.Body) => body.label === '_leftWall'
+    );
+    const leftWallY = leftWall?.bounds.min.y!;
+    const y = leftWallY - 2 * nextFruit.radius;
+
     const newFruit: FruitInstance = {
       id: `${Date.now()}`,
       type: nextFruit,
       x,
-      y: nextFruit.radius,
+      y,
       rotation: initialRotation,
       initialAngularVelocity,
     };
