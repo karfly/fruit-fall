@@ -7,20 +7,55 @@ import { FogAnimation } from './FogAnimation';
 export const Game: React.FC = () => {
   const { fruits, score, isGameOver, resetGame, nextFruit } = useGameStore();
   const { dropFruit, fogAnimation } = usePhysics();
-  const [dragPosition, setDragPosition] = useState<number | null>(null);
+  const [dragPositionX, setDragPositionX] = useState<number | null>(null);
+  const [isDragging, setIsDragging] = useState(false);
   const gameAreaRef = useRef<HTMLDivElement>(null);
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (gameAreaRef.current && !isGameOver && isDragging) {
+      const rect = gameAreaRef.current.getBoundingClientRect();
+      setDragPositionX(e.clientX - rect.left);
+    }
+  };
+
+  const handleTouchMove = (e: React.TouchEvent<HTMLDivElement>) => {
+    if (gameAreaRef.current && !isGameOver && isDragging) {
+      const rect = gameAreaRef.current.getBoundingClientRect();
+      const touch = e.touches[0];
+      setDragPositionX(touch.clientX - rect.left);
+    }
+  };
+
+  const handleMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
     if (gameAreaRef.current && !isGameOver) {
       const rect = gameAreaRef.current.getBoundingClientRect();
-      setDragPosition(e.clientX - rect.left);
+      setDragPositionX(e.clientX - rect.left);
+      setIsDragging(true);
+    }
+  };
+
+  const handleTouchStart = (e: React.TouchEvent<HTMLDivElement>) => {
+    if (gameAreaRef.current && !isGameOver) {
+      const rect = gameAreaRef.current.getBoundingClientRect();
+      const touch = e.touches[0];
+      setDragPositionX(touch.clientX - rect.left);
+      setIsDragging(true);
     }
   };
 
   const handleMouseUp = () => {
-    if (dragPosition !== null && !isGameOver) {
-      dropFruit(dragPosition);
-      setDragPosition(null);
+    if (isDragging && !isGameOver && dragPositionX !== null) {
+      dropFruit(dragPositionX);
+      setIsDragging(false);
+      setDragPositionX(null);
+    }
+  };
+
+  const handleTouchEnd = () => {
+    if (isDragging && !isGameOver && dragPositionX !== null) {
+      dropFruit(dragPositionX);
+      setIsDragging(false);
+      setDragPositionX(null);
     }
   };
 
@@ -42,8 +77,12 @@ export const Game: React.FC = () => {
         backgroundPosition: 'center top',
       }}
       onMouseMove={handleMouseMove}
+      onMouseDown={handleMouseDown}
       onMouseUp={handleMouseUp}
-      onMouseLeave={() => setDragPosition(null)}
+      onMouseLeave={handleMouseUp}
+      onTouchMove={handleTouchMove}
+      onTouchStart={handleTouchStart}
+      onTouchEnd={handleTouchEnd}
     >
       <div className="p-4 text-white font-bold">
         Score: <span>{score}</span>
@@ -52,11 +91,12 @@ export const Game: React.FC = () => {
         {fruits.map((fruit) => (
           <Fruit key={fruit.id} fruit={fruit} />
         ))}
-        {dragPosition !== null && (
+        {isDragging && dragPositionX !== null && (
           <div
-            className="absolute top-0 opacity-50 bg-cover"
+            className="absolute opacity-50 bg-cover"
             style={{
-              left: dragPosition - nextFruit.radius,
+              left: dragPositionX - nextFruit.radius,
+              top: 200 - nextFruit.radius,
               width: nextFruit.radius * 2,
               height: nextFruit.radius * 2,
               backgroundImage: `url(${nextFruit.image})`,
