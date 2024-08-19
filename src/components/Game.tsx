@@ -35,45 +35,49 @@ export const Game: React.FC = () => {
   return (
     <div
       ref={gameAreaRef}
-      className="w-[400px] h-[600px] relative overflow-hidden border border-black bg-[url('/images/background.webp')] bg-cover"
+      className="w-full max-w-md h-[calc(100vh-4rem)] mx-auto relative overflow-hidden border border-black bg-[url('/images/background.webp')] bg-cover flex flex-col"
       onMouseMove={handleMouseMove}
       onMouseUp={handleMouseUp}
       onMouseLeave={() => setDragPosition(null)}
     >
-      <div id="score-display" className="absolute top-2 left-2 text-white font-bold">
-        Score: <span id="score-value">{score}</span>
+      <div className="p-4 text-white font-bold">
+        Score: <span>{score}</span>
       </div>
-      {fruits.map((fruit) => (
-        <Fruit key={fruit.id} fruit={fruit} />
-      ))}
-      {dragPosition !== null && (
-        <div
-          className="absolute top-0 opacity-50 bg-cover"
-          style={{
-            left: dragPosition - nextFruit.radius,
-            width: nextFruit.radius * 2,
-            height: nextFruit.radius * 2,
-            backgroundImage: `url(${nextFruit.image})`,
-          }}
-        />
-      )}
-      {fogAnimation && (
-        <FogAnimation
-          x={fogAnimation.x}
-          y={fogAnimation.y}
-          size={fogAnimation.size}
-        />
-      )}
+      <div className="flex-grow relative">
+        {fruits.map((fruit) => (
+          <Fruit key={fruit.id} fruit={fruit} />
+        ))}
+        {dragPosition !== null && (
+          <div
+            className="absolute top-0 opacity-50 bg-cover"
+            style={{
+              left: dragPosition - nextFruit.radius,
+              width: nextFruit.radius * 2,
+              height: nextFruit.radius * 2,
+              backgroundImage: `url(${nextFruit.image})`,
+            }}
+          />
+        )}
+        {fogAnimation && (
+          <FogAnimation
+            x={fogAnimation.x}
+            y={fogAnimation.y}
+            size={fogAnimation.size}
+          />
+        )}
+      </div>
       {isGameOver && (
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center bg-white bg-opacity-80 p-5 rounded-lg">
-          <h2 className="text-2xl font-bold mb-2">Game Over</h2>
-          <p className="mb-4">Final Score: {score}</p>
-          <button
-            onClick={resetGame}
-            className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded"
-          >
-            Restart
-          </button>
+        <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="bg-white p-6 rounded-lg text-center">
+            <h2 className="text-2xl font-bold mb-2">Game Over</h2>
+            <p className="mb-4">Final Score: {score}</p>
+            <button
+              onClick={resetGame}
+              className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded"
+            >
+              Restart
+            </button>
+          </div>
         </div>
       )}
     </div>
