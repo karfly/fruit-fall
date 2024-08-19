@@ -35,7 +35,7 @@ export const Game: React.FC = () => {
   return (
     <div
       ref={gameAreaRef}
-      className="w-full h-screen mx-auto relative overflow-hidden bg-[url('/images/background.webp')] bg-no-repeat flex flex-col"
+      className="w-full h-full absolute top-0 left-0 overflow-hidden bg-[url('/images/background.webp')] bg-no-repeat flex flex-col"
       style={{
         backgroundSize: 'cover',
         backgroundPosition: 'center top',
