@@ -26,10 +26,7 @@ export const Game: React.FC = () => {
 
   useEffect(() => {
     const checkGameOver = () => {
-    //   const topFruit = fruits.find(fruit => fruit.y - fruit.type.radius <= 0);
-    //   if (topFruit) {
-    //     useGameStore.getState().setGameOver(true);
-    //   }
+      // Commented out game over logic
     };
 
     checkGameOver();
@@ -38,34 +35,25 @@ export const Game: React.FC = () => {
   return (
     <div
       ref={gameAreaRef}
-      style={{
-        width: '400px',
-        height: '600px',
-        position: 'relative',
-        overflow: 'hidden',
-        border: '1px solid black',
-        backgroundImage: `url('/images/background.webp')`,
-        backgroundSize: 'cover',
-      }}
+      className="w-[400px] h-[600px] relative overflow-hidden border border-black bg-[url('/images/background.webp')] bg-cover"
       onMouseMove={handleMouseMove}
       onMouseUp={handleMouseUp}
       onMouseLeave={() => setDragPosition(null)}
     >
-      <div id="score-display">Score: <span id="score-value">{score}</span></div>
+      <div id="score-display" className="absolute top-2 left-2 text-white font-bold">
+        Score: <span id="score-value">{score}</span>
+      </div>
       {fruits.map((fruit) => (
         <Fruit key={fruit.id} fruit={fruit} />
       ))}
       {dragPosition !== null && (
         <div
+          className="absolute top-0 opacity-50 bg-cover"
           style={{
-            position: 'absolute',
-            top: 0,
             left: dragPosition - nextFruit.radius,
             width: nextFruit.radius * 2,
             height: nextFruit.radius * 2,
             backgroundImage: `url(${nextFruit.image})`,
-            backgroundSize: 'cover',
-            opacity: 0.5,
           }}
         />
       )}
@@ -77,10 +65,15 @@ export const Game: React.FC = () => {
         />
       )}
       {isGameOver && (
-        <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', textAlign: 'center', backgroundColor: 'rgba(255, 255, 255, 0.8)', padding: '20px', borderRadius: '10px' }}>
-          <h2>Game Over</h2>
-          <p>Final Score: {score}</p>
-          <button onClick={resetGame}>Restart</button>
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center bg-white bg-opacity-80 p-5 rounded-lg">
+          <h2 className="text-2xl font-bold mb-2">Game Over</h2>
+          <p className="mb-4">Final Score: {score}</p>
+          <button
+            onClick={resetGame}
+            className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded"
+          >
+            Restart
+          </button>
         </div>
       )}
     </div>
