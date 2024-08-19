@@ -11,6 +11,27 @@ export const Game: React.FC = () => {
   const [isDragging, setIsDragging] = useState(false);
   const gameAreaRef = useRef<HTMLDivElement>(null);
 
+  const [dropY, setDropY] = useState<number>(0);
+
+  useEffect(() => {
+    const updateDropY = () => {
+      if (gameAreaRef.current) {
+        const containerHeight = gameAreaRef.current.clientHeight;
+        const originalImageHeight = 2532;
+        const scaleY = containerHeight / originalImageHeight;
+        console.log("scaleY", scaleY);
+        console.log("containerHeight", containerHeight);
+        const dropY = 800 * scaleY;
+        console.log("dropY", dropY);
+        setDropY(dropY);
+      }
+    };
+
+    updateDropY();
+    window.addEventListener('resize', updateDropY);
+    return () => window.removeEventListener('resize', updateDropY);
+  }, []);
+
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     if (gameAreaRef.current && !isGameOver && isDragging) {
       const rect = gameAreaRef.current.getBoundingClientRect();
@@ -96,7 +117,7 @@ export const Game: React.FC = () => {
             className="absolute opacity-50 bg-cover"
             style={{
               left: dragPositionX - nextFruit.radius,
-              top: 200 - nextFruit.radius,
+              top: dropY - 2 * nextFruit.radius,
               width: nextFruit.radius * 2,
               height: nextFruit.radius * 2,
               backgroundImage: `url(${nextFruit.image})`,
