@@ -35,7 +35,11 @@ export const Game: React.FC = () => {
   return (
     <div
       ref={gameAreaRef}
-      className="w-full max-w-md h-[calc(100vh-4rem)] mx-auto relative overflow-hidden border border-black bg-[url('/images/background.webp')] bg-cover flex flex-col"
+      className="w-full h-screen mx-auto relative overflow-hidden bg-[url('/images/background.webp')] bg-no-repeat flex flex-col"
+      style={{
+        backgroundSize: 'cover',
+        backgroundPosition: 'center top',
+      }}
       onMouseMove={handleMouseMove}
       onMouseUp={handleMouseUp}
       onMouseLeave={() => setDragPosition(null)}
