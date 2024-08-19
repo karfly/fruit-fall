@@ -44,7 +44,7 @@ export const Game: React.FC = () => {
         position: 'relative',
         overflow: 'hidden',
         border: '1px solid black',
-        backgroundImage: `url('src/assets/background.webp')`,
+        backgroundImage: `url('/images/background.webp')`,
         backgroundSize: 'cover',
       }}
       onMouseMove={handleMouseMove}

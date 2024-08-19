@@ -45,7 +45,7 @@
 
   height: 333px;
   width: 333px;
-  background: url("src/assets/fog_sprite_4.webp");
+  background: url("/images/fog_sprite_4.webp");
   animation-name: fogAnimation;
   animation-duration: 0.3s;
   animation-timing-function: steps(4);

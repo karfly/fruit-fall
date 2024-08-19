@@ -7,7 +7,7 @@ export const fruitTypes: FruitType[] = [
     color: '#FF0000',
     radius: 15,
     mass: 1,
-    image: 'src/assets/cherry.webp',
+    image: '/images/cherry.webp',
     scale: 1.0,
     verticalShift: 0.0,
     horizontalShift: 0.0
@@ -18,7 +18,7 @@ export const fruitTypes: FruitType[] = [
     color: '#FF69B4',
     radius: 20,
     mass: 2,
-    image: 'src/assets/apple.webp',
+    image: '/images/apple.webp',
     scale: 1.2,
     verticalShift: -0.1,
     horizontalShift: 0.0
@@ -29,7 +29,7 @@ export const fruitTypes: FruitType[] = [
     color: '#FFA500',
     radius: 25,
     mass: 3,
-    image: 'src/assets/orange.webp',
+    image: '/images/orange.webp',
     scale: 1.2,
     verticalShift: -0.1,
     horizontalShift: -0.05
@@ -40,7 +40,7 @@ export const fruitTypes: FruitType[] = [
     color: '#0000FF',
     radius: 30,
     mass: 4,
-    image: 'src/assets/coconut.webp',
+    image: '/images/coconut.webp',
     scale: 1.1,
     verticalShift: -0.05,
     horizontalShift: 0.0
@@ -51,7 +51,7 @@ export const fruitTypes: FruitType[] = [
     color: '#00FF00',
     radius: 35,
     mass: 5,
-    image: 'src/assets/watermelon.webp',
+    image: '/images/watermelon.webp',
     scale: 1.1,
     verticalShift: -0.05,
     horizontalShift: 0.0
